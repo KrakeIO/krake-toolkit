@@ -1,6 +1,6 @@
 # krake-toolkit
 
-A package of common methods used in Krake's Data Harvesting Engine
+A package of common methods used in [Krake's Web Scraping Engine] (https://krake.io)
 
 ## Pre-requisities
 - NodeJS — v0.8.8
