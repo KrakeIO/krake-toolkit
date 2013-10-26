@@ -6,9 +6,12 @@
   , "private": true
   , "engines": {
     "node": "=0.8.8"
-  }  
+  }
   , "dependencies": {
       "kson": "https://github.com/KrakeIO/kson/tarball/master"
     , "async" : ""
   }
+  , "scripts": {
+    "test": "jasmine-node --coffee test/"
+  }  
 }
