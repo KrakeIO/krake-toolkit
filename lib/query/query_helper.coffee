@@ -1,5 +1,5 @@
 # Takes in the JSON query object converts makes available the different attributes via method calls to this class
-KrakeQueryValidator = require './query_validator'
+QueryValidator = require './query_validator'
 
 class QueryHelper
 
@@ -11,12 +11,14 @@ class QueryHelper
     @is_url_array = []
     
     @qv.validate @query_object, (@is_valid, @query_object)=>
-      @columns = @getSchemaRecursive @query_object.columns
-      @columns.push 'origin_url'
-      @columns.push 'origin_pattern'
-      if @query_object.origin_url && @query_object.origin_url.origin_value
-        @columns.unshift 'origin_value'
-  
+      if @is_valid
+        @columns = @getSchemaRecursive @query_object.columns
+        @columns.push 'origin_url'
+        @columns.push 'origin_pattern'
+        if @query_object.origin_url && @query_object.origin_url.origin_value
+          @columns.unshift 'origin_value'
+      else
+        @columns = []
   
   # @Description : returns columns containing urls
   # @return columns:array || []

@@ -1,5 +1,5 @@
 KrakeToolKit = {}
-KrakeToolKit.QueryValidator = require "./lib/query_validator"
-KrakeToolKit.QueryHelper = require "./lib/query_helper"
+KrakeToolKit.QueryValidator = require "./lib/query/query_validator"
+KrakeToolKit.QueryHelper = require "./lib/query/query_helper"
 
 module.exports = KrakeToolKit
