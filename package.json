@@ -3,13 +3,13 @@
     "name": "krake-toolkit"
   , "main": "./krake_toolkit.coffee"
   , "version": "0.0.1"
-  , "private": true
   , "engines": {
     "node": "=0.8.8"
   }
   , "dependencies": {
       "kson": "https://github.com/KrakeIO/kson/tarball/master"
     , "async" : ""
+    , "sequelize": ""
   }
   , "scripts": {
     "test": "jasmine-node --coffee test/"

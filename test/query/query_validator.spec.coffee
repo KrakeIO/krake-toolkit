@@ -5,17 +5,17 @@ ktk = require '../../krake_toolkit'
 describe "Testing Query Validator", ()->
 
   it "should have QueryValidator defined", (done)->
-    expect(ktk.QueryValidator).toBeDefined()  
+    expect(ktk.query.validator).toBeDefined()  
     done()
   
   it "should have return status as false when query is ill-defined", (done)->
-    qv = new ktk.QueryValidator()
+    qv = new ktk.query.validator()
     qv.validate "{", (status, result)->
       expect(status).toBe false
     done()
 
   it "should have return status as true when query is well-defined", (done)->
-    qv = new ktk.QueryValidator()
+    qv = new ktk.query.validator()
     spyOn(qv, 'validate_root_options_obj').andCallThrough()
     spyOn(qv, 'validate_options_obj').andCallThrough()
     spyOn(qv, 'validate_columns_array').andCallThrough()
