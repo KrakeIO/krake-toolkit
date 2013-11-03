@@ -7,7 +7,7 @@ kson = require 'kson'
 Sequelize = require 'sequelize'
 Fs = require 'fs'
 Hstore = require 'pg-hstore' #https://github.com/scarney81/pg-hstore
-QueryHelper = require './query_helper'
+QueryHelper = require '../query/query_helper'
 
 class PGHandler
 

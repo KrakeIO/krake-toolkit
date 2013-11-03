@@ -1,7 +1,7 @@
 kson = require 'kson'
 Sequelize = require 'sequelize'
 Fs = require 'fs'
-QueryHelper = require './query_helper'
+QueryHelper = require '../query/query_helper'
 
 class RelationalDBHandler
 
