@@ -1,6 +1,7 @@
 KrakeToolKit = {}
 KrakeToolKit.query = {}
 KrakeToolKit.query.validator = require "./lib/query/query_validator"
+KrakeToolKit.query.declarative_var = require "./lib/query/declarative_variable_helper"
 KrakeToolKit.query.helper = require "./lib/query/query_helper"
 
 KrakeToolKit.usage = {}
