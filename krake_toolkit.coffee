@@ -1,11 +1,9 @@
 KrakeToolKit = {}
 
-krake = {}
-
-krake.data = {}
-krake.data.mongo_schema_factory = require "./lib/data/mongo_schema_factory"
-krake.data.pg_handler = require "./lib/data/pg_handler"
-krake.data.rdb_handler = require "./lib/data/rdb_handler"
+KrakeToolKit.data = {}
+KrakeToolKit.data.mongo_schema_factory = require "./lib/data/mongo_schema_factory"
+KrakeToolKit.data.pg_handler = require "./lib/data/pg_handler"
+KrakeToolKit.data.rdb_handler = require "./lib/data/rdb_handler"
 
 KrakeToolKit.query = {}
 KrakeToolKit.query.data_transformer = require "./lib/query/data_transformer"
