@@ -1,6 +1,6 @@
-testQuery = require '../fixtures/amazon'
-filteredQuery = require '../fixtures/filtered'
-ktk = require '../../krake_toolkit'
+testQuery = require '../../fixtures/amazon'
+filteredQuery = require '../../fixtures/filtered'
+ktk = require '../../../krake_toolkit'
 
 describe "Testing Query Helper", ()->
 

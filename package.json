@@ -2,15 +2,16 @@
     "author": "Gary Teh <garyjob@gmail.com>",
     "name": "krake-toolkit"
   , "main": "./krake_toolkit.coffee"
-  , "version": "0.0.6"
+  , "version": "0.0.7"
   , "engines": {
     "node": "=0.8.8"
   }
   , "dependencies": {
-      "kson": "https://github.com/KrakeIO/kson/tarball/master"
-    , "async" : ""
+      "async" : ""  
+    , "kson": "https://github.com/KrakeIO/kson/tarball/master"
     , "mongoose": ""
-    , "pg-hstore": ""    
+    , "pg-hstore": ""
+    , "redis": ""      
     , "request": ""    
     , "sequelize": ""
   }
