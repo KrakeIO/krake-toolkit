@@ -5,9 +5,6 @@ KrakeToolKit.data.mongo_schema_factory = require "./lib/data/mongo_schema_factor
 KrakeToolKit.data.pg_handler = require "./lib/data/pg_handler"
 KrakeToolKit.data.rdb_handler = require "./lib/data/rdb_handler"
 
-KrakeToolKit.network = {}
-KrakeToolKit.network.queue = require "./lib/network/queue_interface"
-
 KrakeToolKit.query = {}
 KrakeToolKit.query.data_transformer = require "./lib/query/data_transformer"
 KrakeToolKit.query.declarative_var = require "./lib/query/declarative_variable_helper"
