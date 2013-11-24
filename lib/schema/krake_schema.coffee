@@ -3,10 +3,10 @@ Sequelize = require 'sequelize'
 krakeSchema = {
   id: Sequelize.BIGINT
   content: Sequelize.TEXT
+  frequency: Sequelize.TEXT
   handle: Sequelize.TEXT
-  status: Sequelize.TEXT
   last_ran: Sequelize.DATE
-  project_id : Sequelize.INTEGER    
+  status: Sequelize.TEXT
 }
 
 module.exports = krakeSchema
