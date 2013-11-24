@@ -20,5 +20,6 @@ KrakeToolKit.schema = {}
 KrakeToolKit.schema.config = require './lib/schema/schema_config'
 KrakeToolKit.schema.krake = require './lib/schema/krake_schema'
 KrakeToolKit.schema.member = require './lib/schema/member_schema'
+KrakeToolKit.schema.usage = require './lib/schema/usage_schema'
 
 module.exports = KrakeToolKit
