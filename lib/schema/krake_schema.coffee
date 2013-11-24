@@ -2,6 +2,7 @@
 Sequelize = require 'sequelize'
 krakeSchema = {
   id: Sequelize.BIGINT
+  name: Sequelize.TEXT
   content: Sequelize.TEXT
   frequency: Sequelize.TEXT
   handle: Sequelize.TEXT
