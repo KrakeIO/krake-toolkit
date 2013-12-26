@@ -4,6 +4,8 @@ memberSchema = {
   id : Sequelize.BIGINT
   quota : Sequelize.INTEGER
   auth_token : Sequelize.TEXT
+  package : Sequelize.TEXT
+  topup_day : Sequelize.INTEGER
 }
 
 module.exports = memberSchema
