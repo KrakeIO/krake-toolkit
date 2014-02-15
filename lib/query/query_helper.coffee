@@ -4,7 +4,7 @@ QueryValidator = require './query_validator'
 class QueryHelper
 
   # Sets up the query helper object
-  constructor:(@query_object)->  
+  constructor:(@query_object)->
     @qv = new QueryValidator()
     
     @is_index_array = []
@@ -18,6 +18,7 @@ class QueryHelper
         if @query_object.origin_url && @query_object.origin_url.origin_value
           @columns.unshift 'origin_value'
       else
+        @query_object = {}
         @columns = []
   
   # @Description : returns columns containing urls

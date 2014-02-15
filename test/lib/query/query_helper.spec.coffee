@@ -7,6 +7,11 @@ describe "Testing Query Helper", ()->
   it "should have QueryHelper defined", (done)->
     expect(ktk.query.helper).toBeDefined()  
     done()
+
+  it "should set query_object to {} when testQuery is empty", (done)->
+    qh = new ktk.query.helper ""
+    expect(qh.query_object).nil?.toBe false
+    done()
   
   it "should return all columns", (done)->
     qh = new ktk.query.helper testQuery  
