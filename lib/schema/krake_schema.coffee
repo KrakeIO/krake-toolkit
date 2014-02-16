@@ -4,7 +4,6 @@ krakeSchema = {
   name: Sequelize.TEXT
   content: Sequelize.TEXT
   frequency: Sequelize.TEXT
-  handle: Sequelize.TEXT
   last_ran: Sequelize.DATE
   status: Sequelize.TEXT
   is_private: Sequelize.BOOLEAN
