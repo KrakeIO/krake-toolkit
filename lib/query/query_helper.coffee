@@ -5,6 +5,7 @@ class QueryHelper
 
   # Sets up the query helper object
   constructor:(@query_object)->
+    @origin_query_obj = @query_object
     @qv = new QueryValidator()
     
     @is_index_array = []
@@ -18,7 +19,7 @@ class QueryHelper
         if @query_object.origin_url && @query_object.origin_url.origin_value
           @columns.unshift 'origin_value'
       else
-        @query_object = {}
+        @origin_query_obj = @query_object = {}
         @columns = []
   
   # @Description : returns columns containing urls
@@ -129,7 +130,14 @@ class QueryHelper
 
     return schema_array
 
+  getRootAddressColumns : ()->
+    cols = @origin_query_obj.columns?.filter (column)->
+      column.required_attribute == 'address'
+    cols = cols || []
 
-
+  getRootColumnsWithNestedChild : ()->
+    cols = @origin_query_obj.columns?.filter (column)->
+      column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+    cols = cols || []
 
 module.exports = QueryHelper

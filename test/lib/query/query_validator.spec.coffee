@@ -1,5 +1,5 @@
-amazonQuery = require '../../fixtures/amazon'
-invalidQuery = require '../../fixtures/invalid'
+amazonQuery = require '../../fixtures/json/valid'
+invalidQuery = require '../../fixtures/json/invalid'
 ktk = require '../../../krake_toolkit'
 
 describe "Testing Query Validator", ()->

@@ -3,6 +3,7 @@ query =
   columns: [{
       col_name: 'product_name'
       dom_query: '.lrg.bold'
+      is_index: true
     },{
       col_name: 'product_image'
       dom_query: '.image img'
@@ -19,6 +20,23 @@ query =
           col_name : 'product_description'
           dom_query : '#productDescription'
         }]
+    }, {
+      col_name: 'detailed_page2'
+      dom_query: '.newaps a'
+      options :
+        origin_url: "http://localhost:9999"
+        columns : [{
+          col_name : 'product_description'
+          dom_query : '#productDescription'
+        }]
+    },{        
+      col_name : 'address_col1'
+      dom_query : 'span.bld.lrg.red'
+      required_attribute : 'address'
+    },{        
+      col_name : 'address_col2'
+      dom_query : 'span.bld.lrg.red'
+      required_attribute : 'address'
   }]
 
 module.exports = query
