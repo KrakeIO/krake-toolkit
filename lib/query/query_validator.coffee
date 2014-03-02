@@ -1,15 +1,18 @@
-kson = require 'kson'
 # Validates the JSON query objects and identifies raises the errors
 async = require 'async'
+kson = require 'kson'
 
 class QueryValidator
 
+  constructor : ->
+    @logs = []
+
   # @Description : takes in the JSON object and checks for validity
   # @param : schema:string
-  # @param : callback:function(validation:boolean, value:string||object)
   validate : (schema, callback)->
+    @logs = []
     
-    # Is already an object that does not need and further conversion
+    # Is already an object that does not need any further conversion
     if typeof schema == 'object'
       options = schema
     
@@ -25,96 +28,105 @@ class QueryValidator
           eval schema
             
         catch f
-          callback false
+          @logs.push "Please check your definition for JSON syntax error"
+          callback false, @logs
 
     if options
-      @validate_root_options_obj options, (is_valid, err_msg )=>
-        if is_valid
-          callback is_valid, options
-        else
-          callback is_valid, err_msg
+      validation_outcome = @validate_root_options_obj options
+      if validation_outcome
+        callback validation_outcome, options
+      else
+        callback validation_outcome, @logs
   
   
   # @Description : takes in the Option JSON object and checks the presence of attributes
   # @param : options:object
-  # @param : callback:function(validation:boolean)
-  validate_root_options_obj : (options, callback)->
+  validate_root_options_obj : (options)->
   
     # console.log 'Validating root option'  
     if !options.origin_url
-      return callback(false, 'origin_url is missing')
-            
-    if !options.columns
-      return callback(false, 'columns array is missing')
-    
-    @validate_columns_array options.columns, callback
+      @logs.push 'origin_url is missing'
+      return false
+    return @validate_options_obj options
   
   # @Description : takes in the Option JSON object and checks the presence of attributes
   # @param : options:object
-  # @param : callback : function(validation:boolean)
-  validate_options_obj : (options, callback)->
+  validate_options_obj : (options)->
   
-    if !options.columns
-      return callback(false, 'columns array is missing')
+    if !(options.columns || options.permuted_columns)
+      @logs.push 'Both columns or permuted_columns are missing in options object. At least one must exist.'
+      return false
 
-    @validate_columns_array options.columns, callback
+    is_valid = true
+    if options.columns
+      is_valid = is_valid && @validate_columns_array options.columns
+
+    if options.permuted_columns
+      is_valid = is_valid && @validate_permuted_columns_obj options.permuted_columns
+
+    is_valid
+  
+  validate_permuted_columns_obj : (permuted_columns)->
+    if !permuted_columns.handles
+      @logs.push 'permuted_columns.handles is missing'
+      return false
+
+    is_valid = true
+    if permuted_columns.handles
+      is_valid = is_valid && @validate_columns_array permuted_columns.handles
+
+    if permuted_columns.responses
+      is_valid = is_valid && @validate_columns_array permuted_columns.responses      
+
+    is_valid
   
   # @Description : takes in the column array and validates each and every column
   # @param : columns_array:array
-  # @param : callback : function(validation:boolean)  
-  validate_columns_array : (columns_array, callback)->
+  validate_columns_array : (columns_array)->
   
     if !(columns_array instanceof Array)
-      return callback(false, 'columns_array is not Array')
+      @logs.push 'columns_array is not array'
+      return false
     
     if columns_array.length == 0
-      return callback(false, 'columns_array is empty')
-    
-    error_msg = false
-    
-    # iterates through each column
-    async.every columns_array, (column_obj, next)=>
-      @validate_column_obj column_obj, (result, error)=>
-      
-        if error && !error_msg
-          error_msg = error        
-        else if error && error_msg
-          error_msg += ',' + error
-          
-        next result
-                  
-    , (result)=>
-      callback result, error_msg
+      @logs.push 'columns_array is empty'
+      return false
+
+    is_valid = true
+    columns_array.forEach (column_obj)=>
+      is_valid = is_valid && @validate_column_obj(column_obj)
+
+    is_valid
+
 
   # @Description : takes in the column object and validates its attributes
   # @param : column_obj:object
-  # @param : callback : function(validation:boolean)  
-  validate_column_obj : (column_obj, callback)->
-  
+  validate_column_obj : (column_obj)->
     if !column_obj.col_name
-      return callback(false, 'a column has no col_name')
+      @logs.push 'column_obj.col_name is missing'
+      return false
       
-    if !(column_obj.dom_query || column_obj.xpath)
-      return callback(false, 'column[' + column_obj.col_name + '] has neither dom_query nor xpath')
+    if !(column_obj.dom_query || column_obj.xpath || column_obj.var_query)
+      @logs.push column_obj.col_name + ' has neither dom_query, xpath nor var_query. At least one must exist.'
+      return false
     
     # Has natural nested options
-    if column_obj.options && column_obj.required_attribute && ( column_obj.required_attribute == 'href' || column_obj.required_attribute == 'src' )
-      @validate_options_obj column_obj.options, callback
+    if column_obj.options && column_obj.required_attribute && 
+    ( column_obj.required_attribute == 'href' || column_obj.required_attribute == 'src' )
+      
+      return @validate_options_obj column_obj.options
       
     # Has nested options with origin url
     else if column_obj.options && column_obj.options.origin_url
-      @validate_options_obj column_obj.options, callback
+      return @validate_options_obj column_obj.options
 
     # Is simple column
     else if !column_obj.options
-      callback true
+      return true
     
     # Invalid columns
     else
-      err_msg = 'column[' + column_obj.col_name + '] is invalid. ' + 
-        'Make sure you declared either fuzzy_url : "...PATTERN.."  in the nested options object or ' + 
-        ' required_attribute : "href" '
-        
-      callback false, err_msg
+      @logs.push column_obj.col_name + ' has neither options.origin_url, required_attribute == "src" nor  required_attribute == "href". At least one must exist.'
+      return false
   
 module.exports = QueryValidator
