@@ -2,7 +2,7 @@
     "author": "Gary Teh <garyjob@gmail.com>",
     "name": "krake-toolkit"
   , "main": "./krake_toolkit.coffee"
-  , "version": "0.0.15"
+  , "version": "0.0.16"
   , "engines": {
     "node": "=0.8.8"
   }
