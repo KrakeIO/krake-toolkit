@@ -12,7 +12,6 @@ describe "QueryValidator", ->
     @qv.validate "{", (status, result)->
       expect(status).toBe false
     done()
-
   
   it "should have return status as false when nested options are missing origin_url", (done)->
     invalid_query = require '../../fixtures/json/invalid_nested_missing_origin_url'
@@ -42,9 +41,50 @@ describe "QueryValidator", ->
       expect(result[0]).toEqual 'columns_array is empty'
     done()
 
-
   it "should have return status as false when nested options permuted_columns.handles does not exist", (done)->
     invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_2'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'columns_array is empty'
+    done()
+
+  it "should have return status as false when nested options.columns in permuted_columns.handles does not have col_name", (done)->
+    invalid_query = require '../../fixtures/json/invalid_permuted_nested_1'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'nested_address has neither dom_query, xpath nor var_query. At least one must exist.'
+    done()
+
+  it "should have return status as false when nested options.columns in permuted_columns.handles does not have col_name", (done)->
+    invalid_query = require '../../fixtures/json/invalid_permuted_nested_2'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'column_obj.col_name is missing'
+    done()
+
+  it "should have return status as false when nested options.columns in permuted_columns.handles does not have col_name", (done)->
+    invalid_query = require '../../fixtures/json/invalid_permuted_nested_3'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'columns_array is empty'
+    done()
+
+  it "should have return status as false when nested options.columns in permuted_columns.responses does not have col_name", (done)->
+    invalid_query = require '../../fixtures/json/invalid_permuted_nested_4'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'nested_address has neither dom_query, xpath nor var_query. At least one must exist.'
+    done()
+
+  it "should have return status as false when nested options.columns in permuted_columns.responses does not have col_name", (done)->
+    invalid_query = require '../../fixtures/json/invalid_permuted_nested_5'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'column_obj.col_name is missing'
+    done()
+
+  it "should have return status as false when nested options.columns in permuted_columns.responses does not have col_name", (done)->
+    invalid_query = require '../../fixtures/json/invalid_permuted_nested_6'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'columns_array is empty'
