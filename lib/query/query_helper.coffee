@@ -180,15 +180,15 @@ class QueryHelper
     cols = []
     if @origin_query_obj.columns
       cols = cols.concat @origin_query_obj.columns.filter (column)->
-        column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+        column.options?
 
     if @origin_query_obj.permuted_columns?.handles
       cols = cols.concat @origin_query_obj.permuted_columns.handles.filter (column)->
-        column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+        column.options?
 
     if @origin_query_obj.permuted_columns?.responses
       cols = cols.concat @origin_query_obj.permuted_columns.responses.filter (column)->
-        column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+        column.options?
 
     cols = cols || []
 
