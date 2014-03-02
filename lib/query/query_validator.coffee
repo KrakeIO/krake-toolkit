@@ -1,6 +1,8 @@
 # Validates the JSON query objects and identifies raises the errors
-async = require 'async'
-kson = require 'kson'
+try
+  async = require 'async'
+  kson = require 'kson'
+catch error
 
 class QueryValidator
 
@@ -128,5 +130,7 @@ class QueryValidator
     else
       @logs.push column_obj.col_name + ' has neither options.origin_url, required_attribute == "src" nor  required_attribute == "href". At least one must exist.'
       return false
-  
-module.exports = QueryValidator
+
+try
+  module.exports = QueryValidator
+catch error
