@@ -67,8 +67,8 @@ class QueryValidator
     is_valid
   
   validate_permuted_columns_obj : (permuted_columns)->
-    if !(permuted_columns.handles || permuted_columns.responses)
-      @logs.push 'Neither permuted_columns.handles or permuted_columns.responses exist. At least one must exist'
+    if !permuted_columns.handles
+      @logs.push 'permuted_columns.handles is missing'
       return false
 
     is_valid = true

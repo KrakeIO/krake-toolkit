@@ -1,5 +1,3 @@
-amazonQuery = require '../../fixtures/json/valid'
-invalidQuery = require '../../fixtures/json/invalid'
 ktk = require '../../../krake_toolkit'
 
 describe "QueryValidator", ->
@@ -15,12 +13,65 @@ describe "QueryValidator", ->
       expect(status).toBe false
     done()
 
+  
+  it "should have return status as false when nested options are missing origin_url", (done)->
+    invalid_query = require '../../fixtures/json/invalid_nested_missing_origin_url'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'detailed_page has neither options.origin_url, required_attribute == "src" nor  required_attribute == "href". At least one must exist.'
+    done()
+
+  it "should have return status as false when nested options are missing columns", (done)->
+    invalid_query = require '../../fixtures/json/invalid_nested_missing_columns'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'Both columns or permuted_columns are missing in options object. At least one must exist.'
+    done()
+
+  it "should have return status as false when nested options column is empty", (done)->
+    invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_1'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'columns_array is empty'
+    done()
+
+  it "should have return status as false when nested options permuted_columns.handles is empty", (done)->
+    invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_2'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'columns_array is empty'
+    done()
+
+
+  it "should have return status as false when nested options permuted_columns.handles does not exist", (done)->
+    invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_2'
+    @qv.validate invalid_query, (status, result)->
+      expect(status).toBe false
+      expect(result[0]).toEqual 'columns_array is empty'
+    done()
+
   it "should have return status as true when query is well-defined", (done)->
     spyOn(@qv, 'validate_root_options_obj').andCallThrough()
     spyOn(@qv, 'validate_options_obj').andCallThrough()
     spyOn(@qv, 'validate_columns_array').andCallThrough()
     spyOn(@qv, 'validate_column_obj').andCallThrough()
-    @qv.validate amazonQuery, (status, result)=>
+    valid_query = require '../../fixtures/json/valid'
+    @qv.validate valid_query, (status, result)=>
+      expect(status).toBe true
+      expect(@qv.validate_root_options_obj).toHaveBeenCalled()
+      expect(@qv.validate_options_obj).toHaveBeenCalled()
+      expect(@qv.validate_columns_array).toHaveBeenCalled()
+      expect(@qv.validate_column_obj).toHaveBeenCalled()
+      expect(typeof result).toBe 'object'
+      done()
+
+  it "should have return status as true when query is well-defined", (done)->
+    spyOn(@qv, 'validate_root_options_obj').andCallThrough()
+    spyOn(@qv, 'validate_options_obj').andCallThrough()
+    spyOn(@qv, 'validate_columns_array').andCallThrough()
+    spyOn(@qv, 'validate_column_obj').andCallThrough()
+    valid_query = require '../../fixtures/json/valid_permuted'
+    @qv.validate valid_query, (status, result)=>
       expect(status).toBe true
       expect(@qv.validate_root_options_obj).toHaveBeenCalled()
       expect(@qv.validate_options_obj).toHaveBeenCalled()
@@ -79,10 +130,10 @@ describe "QueryValidator", ->
       expect(@qv.validate_permuted_columns_obj).toHaveBeenCalledWith(options.permuted_columns)
 
   describe "validate_permuted_columns_obj", ->
-    it "should return false if both handles and responses are missing", ->
+    it "should return false if handles is missing", ->
       options = {}
       expect(@qv.validate_permuted_columns_obj options).toEqual false
-      expect(@qv.logs[0]).toEqual 'Neither permuted_columns.handles or permuted_columns.responses exist. At least one must exist'
+      expect(@qv.logs[0]).toEqual 'permuted_columns.handles is missing'
 
     it "should validate handles columns", ->
       options =
@@ -93,6 +144,7 @@ describe "QueryValidator", ->
 
     it "should validate responses columns", ->
       options =
+        handles: []
         responses: []
       spyOn(@qv, "validate_columns_array")
       @qv.validate_permuted_columns_obj options
