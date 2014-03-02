@@ -13,7 +13,16 @@ class QueryHelper
     
     @qv.validate @query_object, (@is_valid, @query_object)=>
       if @is_valid
-        @columns = @getSchemaRecursive @query_object.columns
+        @columns = []
+        if @query_object.columns
+          @columns = @columns.concat @getColumnsRecursive @query_object.columns
+
+        if @query_object.permuted_columns && @query_object.permuted_columns.handles
+          @columns = @columns.concat @getColumnsRecursive @query_object.permuted_columns.handles
+
+        if @query_object.permuted_columns && @query_object.permuted_columns.responses
+          @columns = @columns.concat @getColumnsRecursive @query_object.permuted_columns.responses
+
         @columns.push 'origin_url'
         @columns.push 'origin_pattern'
         if @query_object.origin_url && @query_object.origin_url.origin_value
@@ -23,17 +32,15 @@ class QueryHelper
         @columns = []
   
   # @Description : returns columns containing urls
-  # @return columns:array || []
+  # @return columns:array[string1, string2, string3, ...] || []
   getUrlColumns : ()->
     if @is_url_array
       @is_url_array
     else
       []
   
-  
-  
   # @Description : gets the columns if it was set
-  # @return columns:array
+  # @return columns:array[string1, string2, string3, ...]
   getColumns : ()->
     if @columns
       @columns
@@ -41,12 +48,10 @@ class QueryHelper
     else
       []
   
-  
-  
   # @Description : gets the filtered columns if it has been set
   #   if it has not been set, get the full set of columns
   #   otherwise return false
-  # @return columns:array || false:boolean
+  # @return columns:array[string1, string2, string3, ...] || false:boolean
   getFilteredColumns : ()->
     if @query_object.column_filter
       @query_object.column_filter
@@ -66,15 +71,15 @@ class QueryHelper
   
   
   # @Description : gets array column names that are indexes
-  # @return : index_array:array  
+  # @return : index_array:array[string1, string2, string3, ...]
   getIndexArray : ()->
     @is_index_array
   
   
   
   # @Description: obtain an array of all column names given a scrape input json
-  # @param: columnArray: array
-  getSchemaRecursive : (columnArray)->
+  # @param: columnArray: array[string1, string2, string3, ...]
+  getColumnsRecursive : (columnArray)->
 
     schema_array = []
     url_values = []  
@@ -91,23 +96,23 @@ class QueryHelper
         # when there is a fuzzy url
         if curr_column.options # Has nested column
           url_values.push curr_column.col_name
-          schema_array = schema_array.concat @getSchemaRecursive curr_column.options.columns
+          schema_array = schema_array.concat @getColumnsRecursive curr_column.options.columns
 
           # Used for identifying fuzzy urls
           if curr_column.options.origin_url
           
             url_values.push curr_column.col_name + '_origin_pattern'
-            url_values.push curr_column.col_name + '_origin_url'    
+            url_values.push curr_column.col_name + '_origin_url'
                   
             if curr_column.options.origin_url.origin_value && curr_column.options.origin_url.origin_pattern
               schema_array.push curr_column.col_name + '_origin_value'
                 
         # Is asking for url
-        else if curr_column.required_attribute && curr_column.required_attribute == 'href' || curr_column.required_attribute == 'src'  
+        else if curr_column.required_attribute && ( curr_column.required_attribute == 'href' || curr_column.required_attribute == 'src' )
           url_values.push curr_column.col_name   
 
         # Has no nested column
-        else if curr_column.col_name  
+        else
 
           schema_array.push curr_column.col_name
 
@@ -130,14 +135,61 @@ class QueryHelper
 
     return schema_array
 
+  # @Description: Returns an array of column_objects at the root level
+  #
+  # @return: array[{ col_name_2: "var 1", dom_query: ".col-1" },{ col_nam_2: "var 2", dom_query: ".col-2" }...]
+  getRootColumnsQueryObjects : ()->
+    cols = []
+    if @origin_query_obj.columns
+      cols = cols.concat @origin_query_obj.columns
+
+    if @origin_query_obj.permuted_columns?.handles
+      cols = cols.concat @origin_query_obj.permuted_columns.handles
+
+    if @origin_query_obj.permuted_columns?.responses
+      cols = cols.concat @origin_query_obj.permuted_columns.responses
+
+    cols = cols || []    
+
+
+  # @Description: Returns an array col_names at the root level that have address as required_attribute
+  #   from columns, permuted_columns.handles, permuted_columns.responses
+  #
+  # @return: array[string1, string2, string3, ...]
   getRootAddressColumns : ()->
-    cols = @origin_query_obj.columns?.filter (column)->
-      column.required_attribute == 'address'
+    cols = []
+    if @origin_query_obj.columns
+      cols = cols.concat @origin_query_obj.columns.filter (column)->
+        column.required_attribute == 'address'
+
+    if @origin_query_obj.permuted_columns?.handles
+      cols = cols.concat @origin_query_obj.permuted_columns.handles.filter (column)->
+        column.required_attribute == 'address'
+
+    if @origin_query_obj.permuted_columns?.responses
+      cols = cols.concat @origin_query_obj.permuted_columns.responses.filter (column)->
+        column.required_attribute == 'address'
+
     cols = cols || []
 
+  # @Description: Returns an array col_names at the root level that nested columns
+  #   from columns, permuted_columns.handles, permuted_columns.responses
+  #  
+  # @return: array[string1, string2, string3, ...]
   getRootColumnsWithNestedChild : ()->
-    cols = @origin_query_obj.columns?.filter (column)->
-      column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+    cols = []
+    if @origin_query_obj.columns
+      cols = cols.concat @origin_query_obj.columns.filter (column)->
+        column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+
+    if @origin_query_obj.permuted_columns?.handles
+      cols = cols.concat @origin_query_obj.permuted_columns.handles.filter (column)->
+        column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+
+    if @origin_query_obj.permuted_columns?.responses
+      cols = cols.concat @origin_query_obj.permuted_columns.responses.filter (column)->
+        column.options? && ( ( column.options.origin_url && column.options.columns ) || column.required_attribute == 'href' )
+
     cols = cols || []
 
 module.exports = QueryHelper
