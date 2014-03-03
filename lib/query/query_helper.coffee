@@ -14,14 +14,15 @@ class QueryHelper
     @qv.validate @query_object, (@is_valid, @query_object)=>
       if @is_valid
         @columns = []
-        if @query_object.columns
-          @columns = @columns.concat @getColumnsRecursive @query_object.columns
+        # if @query_object.columns
+        #   @columns = @columns.concat @getColumnsRecursive @query_object.columns
 
-        if @query_object.permuted_columns && @query_object.permuted_columns.handles
-          @columns = @columns.concat @getColumnsRecursive @query_object.permuted_columns.handles
+        # if @query_object.permuted_columns && @query_object.permuted_columns.handles
+        #   @columns = @columns.concat @getColumnsRecursive @query_object.permuted_columns.handles
 
-        if @query_object.permuted_columns && @query_object.permuted_columns.responses
-          @columns = @columns.concat @getColumnsRecursive @query_object.permuted_columns.responses
+        # if @query_object.permuted_columns && @query_object.permuted_columns.responses
+        #   @columns = @columns.concat @getColumnsRecursive @query_object.permuted_columns.responses
+        @columns = @getSchemaRecursive @query_object
 
         @columns.push 'origin_url'
         @columns.push 'origin_pattern'
@@ -75,7 +76,20 @@ class QueryHelper
   getIndexArray : ()->
     @is_index_array
   
-  
+  # @Description: obtain an array of all column names given a scrape input json
+  # @param: columnArray: array[string1, string2, string3, ...]
+  getSchemaRecursive : (query_object)->
+    columns = []
+    if query_object.columns
+      columns = columns.concat @getColumnsRecursive query_object.columns
+
+    if query_object.permuted_columns && @query_object.permuted_columns.handles
+      columns = columns.concat @getColumnsRecursive query_object.permuted_columns.handles
+
+    if query_object.permuted_columns && @query_object.permuted_columns.responses
+      columns = columns.concat @getColumnsRecursive query_object.permuted_columns.responses
+
+    columns
   
   # @Description: obtain an array of all column names given a scrape input json
   # @param: columnArray: array[string1, string2, string3, ...]
@@ -96,7 +110,7 @@ class QueryHelper
         # when there is a fuzzy url
         if curr_column.options # Has nested column
           url_values.push curr_column.col_name
-          schema_array = schema_array.concat @getColumnsRecursive curr_column.options.columns
+          schema_array = schema_array.concat @getSchemaRecursive curr_column.options
 
           # Used for identifying fuzzy urls
           if curr_column.options.origin_url

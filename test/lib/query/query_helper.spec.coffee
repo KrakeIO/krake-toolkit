@@ -18,13 +18,23 @@ describe "Testing Query Helper", ->
     qh = new ktk.query.helper valid_query  
     expect(qh.getColumns().length).toEqual 21
 
+  it "should return all columns", ->
+    qh = new ktk.query.helper valid_query  
+    expect(qh.getColumns().length).toEqual 21
+
   it "should return all permuted_columns in query", ->
     qh = new ktk.query.helper permuted_query
     expect(qh.getColumns().length).toEqual 9
 
-  it "should return all permuted_columns in query", ->
-    qh = new ktk.query.helper permuted_nested_query
-    expect(qh.getColumns().length).toEqual 27
+  it "should return all permuted_columns in 3 level nested query", ->
+    permuted_nested_query_l3 = require '../../fixtures/json/valid_permuted_nested_3_lvl_1'
+    qh = new ktk.query.helper permuted_nested_query_l3
+    expect(qh.getColumns().length).toEqual 6
+
+  it "should return all permuted_columns in 3 level nested query", ->
+    permuted_nested_query_l3 = require '../../fixtures/json/valid_permuted_nested_3_lvl_2'
+    qh = new ktk.query.helper permuted_nested_query_l3
+    expect(qh.getColumns().length).toEqual 7
 
   it "should return all url columns", ->
     qh = new ktk.query.helper valid_query
