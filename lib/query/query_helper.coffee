@@ -80,13 +80,13 @@ class QueryHelper
   # @param: columnArray: array[string1, string2, string3, ...]
   getSchemaRecursive : (query_object)->
     columns = []
-    if query_object.columns
+    if query_object?.columns
       columns = columns.concat @getColumnsRecursive query_object.columns
 
-    if query_object.permuted_columns && @query_object.permuted_columns.handles
+    if query_object?.permuted_columns?.handles
       columns = columns.concat @getColumnsRecursive query_object.permuted_columns.handles
 
-    if query_object.permuted_columns && @query_object.permuted_columns.responses
+    if query_object?.permuted_columns?.responses
       columns = columns.concat @getColumnsRecursive query_object.permuted_columns.responses
 
     columns
