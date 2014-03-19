@@ -19,7 +19,7 @@ class DeclarativeVariableHelper
         if Array.isArray(task_option_obj.origin_url)
           list_of_urls = task_option_obj.origin_url
           for x in [0...list_of_urls.length]
-            new_task_option_object = kson.parse(JSON.stringify(task_option_obj))
+            new_task_option_object = kson.parse(kson.stringify(task_option_obj))
             new_task_option_object.origin_url = list_of_urls[x]
             new_task_option_object.data = new_task_option_object.data || {}
             new_task_option_object.data[ @getVariableName(prefix, 'origin_pattern') ] = new_task_option_object.origin_url
@@ -32,7 +32,7 @@ class DeclarativeVariableHelper
         else if task_option_obj.origin_url.origin_value && task_option_obj.origin_url.origin_pattern
           list_of_values = task_option_obj.origin_url.origin_value
           for x in [0...list_of_values.length]
-            new_task_option_object = kson.parse(JSON.stringify(task_option_obj))
+            new_task_option_object = kson.parse(kson.stringify(task_option_obj))
             new_task_option_object.data = new_task_option_object.data || {}
             new_task_option_object.data[ @getVariableName(prefix, 'origin_pattern') ] = new_task_option_object.origin_url.origin_pattern
             new_task_option_object.data[ @getVariableName(prefix, 'origin_value') ] = list_of_values[x]

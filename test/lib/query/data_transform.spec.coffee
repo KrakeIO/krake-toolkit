@@ -220,3 +220,18 @@ describe "test extraction of a string of comma separated numbers ", ()->
     output = dt.getValue()
     expect(output).toEqual "001"
     done()
+
+describe "getting number", ()->
+  it "should return the first number in the string", (done)->
+    column_object = {
+        "col_name": "year of car"
+        "xpath": "//*[@id='thelist']/tr/td/table/tbody/tr/td[3]"
+        'regex_pattern' : /[0-9]+/
+    }
+    
+    value = "2014 FORD FOCUS SE - MARION, IL"
+    dt = new DataTransformer value, column_object
+
+    output = dt.getValue()
+    expect(output).toEqual "2014"
+    done()    
