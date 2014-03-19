@@ -6,7 +6,7 @@ describe "QueryValidator", ->
 
   it "should have QueryValidator defined", (done)->
     expect(ktk.query.validator).toBeDefined()  
-    done()
+    done()    
   
   it "should have return status as false when query is ill-defined", (done)->
     @qv.validate "{", (status, result)->
@@ -118,6 +118,42 @@ describe "QueryValidator", ->
       expect(@qv.validate_columns_array).toHaveBeenCalled()
       expect(@qv.validate_column_obj).toHaveBeenCalled()
       expect(typeof result).toBe 'object'
+      done()
+
+  it "should return data object if query has one", (done)->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+      }]
+      data:
+        val1: "value"
+    @qv.validate query, (status, result)=>
+      expect(status).toBe true
+      expect(typeof result.data).toBe 'object'
+      expect(result.data.val1).toEqual 'value'
+      done()
+
+  it "should return data object if query has one that is nested", (done)->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+        required_attribute: "href"
+        options:
+          columns: [{
+            col_name: "col name2"
+            dom_query: ".css2"
+          }]
+          data:
+            val1: "value"
+      }]
+
+    @qv.validate query, (status, result)=>
+      expect(status).toBe true
+      expect(typeof result.columns[0].options.data).toBe 'object'
       done()
 
   describe "validate_root_options_obj", ->
@@ -289,6 +325,7 @@ describe "QueryValidator", ->
       expect(@qv.validate_options_obj).toHaveBeenCalled()
       args = @qv.validate_options_obj.mostRecentCall.args
       expect(args[0]).toEqual col.options
+
 
 
 
