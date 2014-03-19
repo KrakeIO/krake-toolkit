@@ -89,6 +89,10 @@ class QueryHelper
     if query_object?.permuted_columns?.responses
       columns = columns.concat @getColumnsRecursive query_object.permuted_columns.responses
 
+    if query_object?.data?
+      for col_name, col_val of query_object.data
+        columns.push(col_name) unless columns.indexOf(col_name) > -1
+
     columns
   
   # @Description: obtain an array of all column names given a scrape input json

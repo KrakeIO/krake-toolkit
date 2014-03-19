@@ -54,6 +54,115 @@ describe "Testing Query Helper", ->
     qh = new ktk.query.helper "{"
     expect(qh.getIndexArray().length).toEqual 0
 
+  it "should return data in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+      }]
+      data:
+        val1: "value"
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('val1') > -1 ).toBe true
+
+  it "should return nested data in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+        required_attribute: "href"
+        options:
+          columns: [{
+            col_name: "col name2"
+            dom_query: ".css2"
+          }]
+          data:
+            val1: "value"
+      }]
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('val1') > -1 ).toBe true
+
+  it "should return not have duplicated data col in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col1"
+        dom_query: ".css"
+      }]
+      data:
+        col1: "value"
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('col1') > -1 ).toBe true    
+    expect(qh.getColumns().length).toEqual 3    
+
+  it "should return not return duplicated nested data col in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+        required_attribute: "href"
+        options:
+          columns: [{
+            col_name: "col2"
+            dom_query: ".css2"
+          }]
+          data:
+            col2: "value"
+      }]
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
+    expect(qh.getColumns().length).toEqual 4
+
+  it "should return not return duplicated nested data col in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+        required_attribute: "href"
+        options:
+          columns: [{
+            col_name: "col2"
+            dom_query: ".css2"
+          }]
+          data:
+            col2: "value"
+      }]
+      data:
+        col2: "value"
+
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
+    expect(qh.getColumns().length).toEqual 4
+
+  it "should return not return duplicated nested data col in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+        required_attribute: "href"
+        options:
+          columns: [{
+            col_name: "col2"
+            dom_query: ".css2"
+          }]
+          data:
+            col2: "value"
+      },{
+        col_name: "col2"
+        dom_query: ".css"
+      }]
+      data:
+        col2: "value"
+              
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
+    expect(qh.getColumns().length).toEqual 4
+
   describe "getRootColumnsQueryObjects", ->
     it "should return columns objects in options.columns", ->
       qh = new ktk.query.helper valid_query
