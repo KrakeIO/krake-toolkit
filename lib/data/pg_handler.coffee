@@ -22,8 +22,12 @@ class PGHandler
   #         - port: string, host's port number
   #     - columns: array, specifying the columns to be extracted
   #     - data: array, additional columns to be extracted  
-  constructor:(@rdbParams)->
+  constructor:(@rdbParams, callback)->
   
+    @hstore_col = "properties"
+    @status_cols = ["createdAt", "updatedAt", "pingedAt"]
+    @common_cols = @status_cols.concat([@hstore_col]) 
+
     # catch table naming error - table name does not end with 's'
     @rdbParams.tableName[@rdbParams.tableName.length - 1] != 's' && @rdbParams.tableName += 's'
     
@@ -37,9 +41,9 @@ class PGHandler
     @dbHandler = null
     @model = {}
     @connected = false
-    @init()
+    @init(callback)
   
-  init:()->
+  init:(callback)->
     try 
       options = {}
       options.host = @rdbParams.host.host
@@ -63,9 +67,11 @@ class PGHandler
         console.log '[PgHandler] Data Table is ready'      
         @connected = true
         @processQueue()
+        callback && callback()
       
       cbFailure = (error) =>
         console.log "[PgHandler] Relational db connection failure.\n Error message := "+error
+        callback && callback()
       
       @createTable @rdbParams.tableName, cbSuccess, cbFailure
         
@@ -77,22 +83,25 @@ class PGHandler
 
   # @Description: publish scraped data to specified destination, if connection was not established yet put the task to the queue
   # @param: dataObject: object, entry returned by scrape engine
-  publish: (dataObject)->
+  publish: (data, callback)->
     if @connected
       # console.log 'pgHandler: line 74'
-      @replaceRecord dataObject
+      @replaceRecord data, callback
+
     else
       # console.log 'pgHandler: line 78'    
       @task_queue = @task_queue || []
-      @task_queue.push dataObject
+      @task_queue.push 
+        data: data
+        callback: callback
 
 
 
   # @Description: publishes all the outstanding records queued up while waiting for table to be created in the database
   processQueue: ()->
     if @task_queue?
-      while task = @task_queue.pop()
-        @replaceRecord task
+      while args = @task_queue.pop()
+        @replaceRecord args.data, args.callback
   
 
   
@@ -138,7 +147,7 @@ class PGHandler
   #   creates a new record if it does not exist yet
   #   updates existing record if it does not exist yet
   # @param : record:object
-  replaceRecord: (record)->
+  replaceRecord: (record, callback)->
   
     record = @cleanJSON record
     if @is_index_array.length > 0
@@ -207,6 +216,7 @@ class PGHandler
         @dbHandler.query( master_statement ).success(
             (result)=>
               console.log "PgHandler: Record was successfully updated"
+              callback && callback()
           ).error(
             (e)->
               console.log "PgHandler: Error occured saving record\nError: " + e
@@ -217,7 +227,7 @@ class PGHandler
 
     # since there is no index key indicated, we just do a flat and simple writing operation        
     else
-      @createRecord record
+      @createRecord record, callback
   
   
   
@@ -242,7 +252,7 @@ class PGHandler
 
   # @Description: Create a record in the destination database
   # @param: obj: object to be saved
-  createRecord:(obj)->
+  createRecord:(obj, callback)->
   
     if obj.pingedAt
       pingedAt = obj.pingedAt
@@ -264,12 +274,16 @@ class PGHandler
       @dbHandler.query( master_statement ).success(
           (result)=>
             console.log "PgHandler: New record was successfully created"
+            callback && callback()
+
         ).error(
           (e)->
             console.log "PgHandler: Error occured saving record\nError: %s", e
             console.log "===================================================="
             console.log master_statement
-            console.log "===================================================="              
+            console.log "===================================================="
+            callback && callback()
+
         )
     )
     
@@ -357,6 +371,43 @@ class PGHandler
         
     json_obj
 
+  fetchRecords: (callback)->
+    selected_cols = @schema_array
+    @status_cols.forEach (curr_col)->
+      if curr_col not in selected_cols then selected_cols.push curr_col
+
+
+    selected_cols_query = selected_cols.map((column)=>
+      query_section = @simpleColName(column)
+      query_section += " as " + @colLabel(column)
+      query_section
+    ).join(",")
+
+    select_query = "select " + selected_cols_query + " from  " + @rdbParams.tableName
+
+    @dbHandler.query(select_query).success (records)=>
+      callback && callback records
+
+  simpleColName: (column)->
+    column = column.replace(/"/, '&#34;').replace(/'/, '&#39;')
+    if column in @common_cols
+      @timeStampColName column
+    else 
+      @hstoreColName column
+
+  hstoreColName: (column)->
+    @hstore_col + "::hstore->'" + column + "'"
+
+  timeStampColName: (timestamp_column)->
+    'to_char("' + timestamp_column + '", \'YYYY-MM-DD HH24:MI:SS\')'
+
+  trucateTable: (callback)->
+    @dbHandler.query('truncate "' + @rdbParams.tableName + '";').success ()=>
+      callback && callback()
+
+  colLabel : (column)->
+    column = column.replace(/"/, '&#34;').replace(/'/, '&#39;')    
+    '"' + column + '"'  
   
   
   # @Description: closes a remote relational database connection

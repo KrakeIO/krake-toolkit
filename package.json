@@ -2,7 +2,7 @@
     "author": "Gary Teh <garyjob@gmail.com>",
     "name": "krake-toolkit"
   , "main": "./krake_toolkit.coffee"
-  , "version": "0.0.23"
+  , "version": "0.0.24"
   , "engines": {
     "node": "=0.8.8"
   }
@@ -10,6 +10,7 @@
       "async" : ""  
     , "kson": "https://github.com/KrakeIO/kson/tarball/master"
     , "mongoose": ""
+    , "pg" : ""    
     , "pg-hstore": ""   
     , "request": ""    
     , "sequelize": ""

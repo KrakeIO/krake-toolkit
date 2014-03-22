@@ -14,77 +14,77 @@ describe "QueryValidator", ->
     done()
   
   it "should have return status as false when nested options are missing origin_url", (done)->
-    invalid_query = require '../../fixtures/json/invalid_nested_missing_origin_url'
+    invalid_query = require '../../fixtures/json/query/invalid_nested_missing_origin_url'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'detailed_page has neither options.origin_url, required_attribute == "src" nor  required_attribute == "href". At least one must exist.'
     done()
 
   it "should have return status as false when nested options are missing columns", (done)->
-    invalid_query = require '../../fixtures/json/invalid_nested_missing_columns'
+    invalid_query = require '../../fixtures/json/query/invalid_nested_missing_columns'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'Both columns or permuted_columns are missing in options object. At least one must exist.'
     done()
 
   it "should have return status as false when nested options column is empty", (done)->
-    invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_1'
+    invalid_query = require '../../fixtures/json/query/invalid_nested_empty_columns_1'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'columns_array is empty'
     done()
 
   it "should have return status as false when nested options permuted_columns.handles is empty", (done)->
-    invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_2'
+    invalid_query = require '../../fixtures/json/query/invalid_nested_empty_columns_2'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'columns_array is empty'
     done()
 
   it "should have return status as false when nested options permuted_columns.handles does not exist", (done)->
-    invalid_query = require '../../fixtures/json/invalid_nested_empty_columns_2'
+    invalid_query = require '../../fixtures/json/query/invalid_nested_empty_columns_2'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'columns_array is empty'
     done()
 
   it "should have return status as false when nested options.columns in permuted_columns.handles does not have col_name", (done)->
-    invalid_query = require '../../fixtures/json/invalid_permuted_nested_1'
+    invalid_query = require '../../fixtures/json/query/invalid_permuted_nested_1'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'nested_address has neither dom_query, xpath nor var_query. At least one must exist.'
     done()
 
   it "should have return status as false when nested options.columns in permuted_columns.handles does not have col_name", (done)->
-    invalid_query = require '../../fixtures/json/invalid_permuted_nested_2'
+    invalid_query = require '../../fixtures/json/query/invalid_permuted_nested_2'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'column_obj.col_name is missing'
     done()
 
   it "should have return status as false when nested options.columns in permuted_columns.handles does not have col_name", (done)->
-    invalid_query = require '../../fixtures/json/invalid_permuted_nested_3'
+    invalid_query = require '../../fixtures/json/query/invalid_permuted_nested_3'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'columns_array is empty'
     done()
 
   it "should have return status as false when nested options.columns in permuted_columns.responses does not have col_name", (done)->
-    invalid_query = require '../../fixtures/json/invalid_permuted_nested_4'
+    invalid_query = require '../../fixtures/json/query/invalid_permuted_nested_4'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'nested_address has neither dom_query, xpath nor var_query. At least one must exist.'
     done()
 
   it "should have return status as false when nested options.columns in permuted_columns.responses does not have col_name", (done)->
-    invalid_query = require '../../fixtures/json/invalid_permuted_nested_5'
+    invalid_query = require '../../fixtures/json/query/invalid_permuted_nested_5'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'column_obj.col_name is missing'
     done()
 
   it "should have return status as false when nested options.columns in permuted_columns.responses does not have col_name", (done)->
-    invalid_query = require '../../fixtures/json/invalid_permuted_nested_6'
+    invalid_query = require '../../fixtures/json/query/invalid_permuted_nested_6'
     @qv.validate invalid_query, (status, result)->
       expect(status).toBe false
       expect(result[0]).toEqual 'columns_array is empty'
@@ -95,7 +95,7 @@ describe "QueryValidator", ->
     spyOn(@qv, 'validate_options_obj').andCallThrough()
     spyOn(@qv, 'validate_columns_array').andCallThrough()
     spyOn(@qv, 'validate_column_obj').andCallThrough()
-    valid_query = require '../../fixtures/json/valid'
+    valid_query = require '../../fixtures/json/query/valid'
     @qv.validate valid_query, (status, result)=>
       expect(status).toBe true
       expect(@qv.validate_root_options_obj).toHaveBeenCalled()
@@ -110,7 +110,7 @@ describe "QueryValidator", ->
     spyOn(@qv, 'validate_options_obj').andCallThrough()
     spyOn(@qv, 'validate_columns_array').andCallThrough()
     spyOn(@qv, 'validate_column_obj').andCallThrough()
-    valid_query = require '../../fixtures/json/valid_permuted'
+    valid_query = require '../../fixtures/json/query/valid_permuted'
     @qv.validate valid_query, (status, result)=>
       expect(status).toBe true
       expect(@qv.validate_root_options_obj).toHaveBeenCalled()
