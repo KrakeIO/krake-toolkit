@@ -64,19 +64,19 @@ class PGHandler
       @rdbParams.data && (@schema_array = @schema_array.concat Object.keys(@rdbParams.data))
 
       cbSuccess = () =>
-        console.log '[PgHandler] Data Table is ready'      
+        console.log '  [PgHandler] Data Table is ready'      
         @connected = true
         @processQueue()
         callback && callback()
       
       cbFailure = (error) =>
-        console.log "[PgHandler] Relational db connection failure.\n Error message := "+error
+        console.log "  [PgHandler] Relational db connection failure.\n Error message := "+error
         callback && callback()
       
       @createTable @rdbParams.tableName, cbSuccess, cbFailure
         
     catch error
-      console.log "PgHandler: %s" + error
+      console.log "  [PgHandler]: Init error. Error message := %s" + error
       # process.exit(1)
 
 
@@ -151,6 +151,7 @@ class PGHandler
   
     record = @cleanJSON record
     if @is_index_array.length > 0
+      console.log " [PgHandler]: indexes detected - [%s]", @is_index_array.join("', '")
     
       # statement to check if the record exist
       index_criteria = {}
@@ -215,12 +216,12 @@ class PGHandler
         
         @dbHandler.query( master_statement ).success(
             (result)=>
-              console.log "PgHandler: Record was successfully updated"
+              console.log "  [PgHandler]: Record was successfully updated"
               callback && callback()
               
           ).error(
             (e)->
-              console.log "PgHandler: Error occured saving record\nError: " + e
+              console.log "  [PgHandler]: Error occured saving record\nError: " + e
               console.log "===================================================="
               console.log master_statement
               console.log "===================================================="
@@ -229,6 +230,7 @@ class PGHandler
 
     # since there is no index key indicated, we just do a flat and simple writing operation        
     else
+      console.log " [PgHandler]: no indexes detected"
       @createRecord record, callback
   
   
@@ -275,12 +277,12 @@ class PGHandler
 
       @dbHandler.query( master_statement ).success(
           (result)=>
-            console.log "PgHandler: New record was successfully created"
+            console.log "  [PgHandler]: New record was successfully created"
             callback && callback()
 
         ).error(
           (e)->
-            console.log "PgHandler: Error occured saving record\nError: %s", e
+            console.log "  [PgHandler]: Error occured saving record\nError: %s", e
             console.log "===================================================="
             console.log master_statement
             console.log "===================================================="
