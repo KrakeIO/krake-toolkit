@@ -217,12 +217,14 @@ class PGHandler
             (result)=>
               console.log "PgHandler: Record was successfully updated"
               callback && callback()
+              
           ).error(
             (e)->
               console.log "PgHandler: Error occured saving record\nError: " + e
               console.log "===================================================="
               console.log master_statement
-              console.log "===================================================="              
+              console.log "===================================================="
+              callback && callback()
           )
 
     # since there is no index key indicated, we just do a flat and simple writing operation        
