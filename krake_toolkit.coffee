@@ -25,5 +25,6 @@ KrakeToolKit.schema.data_set            = require './lib/schema/data_set_schema'
 KrakeToolKit.schema.data_set_krake      = require './lib/schema/data_set_krake_schema'
 KrakeToolKit.schema.data_set_krake_rule = require './lib/schema/data_set_krake_rule_schema'
 KrakeToolKit.schema.record              = require './lib/schema/record_schema'
+KrakeToolKit.schema.record_set          = require './lib/schema/record_set_schema'
 
 module.exports  = KrakeToolKit
