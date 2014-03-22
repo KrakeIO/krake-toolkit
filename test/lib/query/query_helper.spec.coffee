@@ -1,8 +1,8 @@
-valid_query = require '../../fixtures/json/valid'
-filtered_query = require '../../fixtures/json/filtered'
-invalid_query = require '../../fixtures/json/invalid'
-permuted_query = require '../../fixtures/json/valid_permuted'
-permuted_nested_query = require '../../fixtures/json/valid_permuted_nested'
+valid_query = require '../../fixtures/json/query/valid'
+filtered_query = require '../../fixtures/json/query/filtered'
+invalid_query = require '../../fixtures/json/query/invalid'
+permuted_query = require '../../fixtures/json/query/valid_permuted'
+permuted_nested_query = require '../../fixtures/json/query/valid_permuted_nested'
 ktk = require '../../../krake_toolkit'
 
 describe "Testing Query Helper", ->
@@ -27,12 +27,12 @@ describe "Testing Query Helper", ->
     expect(qh.getColumns().length).toEqual 9
 
   it "should return all permuted_columns in 3 level nested query", ->
-    permuted_nested_query_l3 = require '../../fixtures/json/valid_permuted_nested_3_lvl_1'
+    permuted_nested_query_l3 = require '../../fixtures/json/query/valid_permuted_nested_3_lvl_1'
     qh = new ktk.query.helper permuted_nested_query_l3
     expect(qh.getColumns().length).toEqual 6
 
   it "should return all permuted_columns in 3 level nested query", ->
-    permuted_nested_query_l3 = require '../../fixtures/json/valid_permuted_nested_3_lvl_2'
+    permuted_nested_query_l3 = require '../../fixtures/json/query/valid_permuted_nested_3_lvl_2'
     qh = new ktk.query.helper permuted_nested_query_l3
     expect(qh.getColumns().length).toEqual 7
 
