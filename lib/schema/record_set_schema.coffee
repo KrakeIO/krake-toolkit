@@ -2,7 +2,7 @@ Sequelize = require 'sequelize'
 
 recordSetSchema = 
   properties:         'hstore'
-  datasource_handle:  Sequelize.INTEGER
+  datasource_handle:  Sequelize.TEXT
   pingedAt:           Sequelize.DATE
 
 
