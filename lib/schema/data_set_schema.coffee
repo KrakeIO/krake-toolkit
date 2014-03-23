@@ -2,6 +2,7 @@
 Sequelize = require 'sequelize'
 dataSetSchema = {
   name: Sequelize.TEXT
+  handle: Sequelize.TEXT
 }
 
 module.exports = dataSetSchema
