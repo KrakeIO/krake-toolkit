@@ -14,7 +14,11 @@
     , "pg-hstore": ""   
     , "request": ""    
     , "sequelize": ""
-  }
+  },
+  "devDependencies": {
+      "express": "2.5.7"
+    , "dateformat": ""
+  }  
   , "scripts": {
     "test": "jasmine-node --coffee test/"
   }  
