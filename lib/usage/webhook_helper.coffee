@@ -37,15 +37,13 @@ class WebHookHelper
         krake_name : @krake_settings.name,
         krake_handle : @krake_settings.handle,  
         event_name : 'complete',
-        json_data_url : @data_server + '/' + @krake_settings.handle + 
-            '/search/json?q={ "pingedAt": "' + @job_wrapper.query.data.pingedAt + '" }',
-          
-        csv_data_url : @data_server + '/' + @krake_settings.handle + 
-            '/search/csv?q={ "pingedAt": "' + @job_wrapper.query.data.pingedAt + '" }'
+        batch_time : @job_wrapper.query.data.pingedAt
       }
 
     console.log '[WEBHOOK_HELPER] : Posting Complete Package to WebHook URL'
+    console.log '============'
     console.log options
+    console.log '============'
     
     request options, (error, response, body)=>
       console.log 'Task %s notification sent to WebHook Server', 'complete'
