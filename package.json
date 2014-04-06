@@ -2,7 +2,7 @@
     "author": "Gary Teh <garyjob@gmail.com>",
     "name": "krake-toolkit"
   , "main": "./krake_toolkit.coffee"
-  , "version": "0.0.28"
+  , "version": "0.0.29"
   , "engines": {
     "node": "=0.8.8"
   }
@@ -14,7 +14,11 @@
     , "pg-hstore": ""   
     , "request": ""    
     , "sequelize": ""
-  }
+  },
+  "devDependencies": {
+      "express": "2.5.7"
+    , "dateformat": ""
+  }  
   , "scripts": {
     "test": "jasmine-node --coffee test/"
   }  
