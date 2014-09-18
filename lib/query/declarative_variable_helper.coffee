@@ -9,7 +9,8 @@ class DeclarativeVariableHelper
   # @param : task_option_obj:object
   # @param : prefix:string  
   # @param : callback:function(new_task_option_obj:string)
-  convertOriginUrl : (task_option_obj, prefix, callback)->
+  # @param : final_callback:function()
+  convertOriginUrl : (task_option_obj, prefix, callback, final_callback)->
     prefix = prefix || ''
     switch typeof task_option_obj.origin_url
   
@@ -52,7 +53,7 @@ class DeclarativeVariableHelper
                 
         callback new_task_option_object  
 
-
+    final_callback?()
 
   # @Description : returns the modified variable name given prefix
   # @param : prefix:String
