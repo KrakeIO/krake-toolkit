@@ -12,6 +12,41 @@ class DeclarativeVariableHelper
   # @param : final_callback:function()
   convertOriginUrl : (task_option_obj, prefix, callback, final_callback)->
     prefix = prefix || ''
+
+    compiled_objs_final = []
+    compiled_obj_urls   = @getCompiledForURLs task_option_obj, prefix
+
+    # Sub compiles to more url objects if the post_data is an array instead of an object
+    compiled_obj_urls.forEach (compiled_obj_url)=>
+      curr_compiled_finals = @getCompiledForPostData compiled_obj_url
+
+      curr_compiled_finals.forEach (curr_compiled_final)=>
+        compiled_objs_final.push curr_compiled_final
+
+    # Makes callback for each compiled_obj_final
+    compiled_objs_final.forEach (compiled_obj)=>
+      callback? compiled_obj
+
+    final_callback? compiled_objs_final
+
+  getCompiledForPostData: (task_option_obj)->
+    compiled_objs = []
+    if !task_option_obj.post_data
+      compiled_objs.push task_option_obj
+    else
+      if Array.isArray task_option_obj.post_data
+        task_option_obj.post_data.forEach (post_data)->
+          new_task_option_object = kson.parse(kson.stringify(task_option_obj))
+          new_task_option_object.post_data = post_data
+          compiled_objs.push new_task_option_object
+
+      else
+        compiled_objs.push task_option_obj
+
+    compiled_objs
+
+  getCompiledForURLs: (task_option_obj, prefix)->
+    compiled_objs = []    
     switch typeof task_option_obj.origin_url
   
       when "object"
@@ -27,7 +62,7 @@ class DeclarativeVariableHelper
             new_task_option_object.origin_url = @replaceEmbeddedVariableName new_task_option_object.origin_url,
               new_task_option_object.data  
             new_task_option_object.data[ @getVariableName(prefix, 'origin_url') ] = new_task_option_object.origin_url
-            callback new_task_option_object
+            compiled_objs.push new_task_option_object
     
         # when is an origin_url_object
         else if task_option_obj.origin_url.origin_value && task_option_obj.origin_url.origin_pattern
@@ -41,7 +76,7 @@ class DeclarativeVariableHelper
               new_task_option_object.data
             new_task_option_object.data[  @getVariableName(prefix, 'origin_url') ] = new_task_option_object.origin_url
             
-            callback new_task_option_object
+            compiled_objs.push new_task_option_object
           
       when "string"
         new_task_option_object = task_option_obj
@@ -51,9 +86,9 @@ class DeclarativeVariableHelper
           new_task_option_object.data
         new_task_option_object.data[ @getVariableName(prefix, 'origin_url') ] = new_task_option_object.origin_url
                 
-        callback new_task_option_object  
+        compiled_objs.push new_task_option_object    
 
-    final_callback?()
+    compiled_objs
 
   # @Description : returns the modified variable name given prefix
   # @param : prefix:String
