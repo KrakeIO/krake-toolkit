@@ -69,6 +69,212 @@ describe "return 2 origin urls", ()->
     @dvh.convertOriginUrl query, false, stubbed_obj.iterator, (compiled_objs)=>
       expect(compiled_objs.length).toEqual 9
       expect(stubbed_obj.iterator.callCount).toEqual 9
-      done()      
+      done()
 
-      
+  it "should return post_data attributes in data", ->
+    stubbed_obj = 
+      iterator: ()->
+    spyOn stubbed_obj, "iterator"
+
+    query =
+      origin_url: "some_url",
+      columns: [{
+        col_name: "a col"
+        dom_query: ".a-col"
+      }]
+      post_data: 
+        oh_well: "what to do"
+
+    @dvh.convertOriginUrl query, false, stubbed_obj.iterator, (compiled_objs)=>
+      expect(compiled_objs).toEqual [{
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data:
+          oh_well: "what to do"
+        data:
+          oh_well: "what to do"
+          origin_url: "some_url"
+          origin_pattern: "some_url"
+      }]
+
+  it "should return post_data attributes in array in each data", ->
+    stubbed_obj = 
+      iterator: ()->
+    spyOn stubbed_obj, "iterator"
+    query =
+      origin_url: "some_url",
+      columns: [{
+        col_name: "a col"
+        dom_query: ".a-col"
+      }]
+      post_data: [
+        { oh_well: "what to do" },
+        { what_to_do: "can't do much" },
+      ]
+
+    @dvh.convertOriginUrl query, false, stubbed_obj.iterator, (compiled_objs)=>
+      expect(compiled_objs).toEqual [{
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data:
+          oh_well: "what to do"
+        data:
+          oh_well: "what to do"
+          origin_url: "some_url"
+          origin_pattern: "some_url"
+      },
+      {
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data:
+          what_to_do: "can't do much"
+        data:
+          what_to_do: "can't do much"
+          origin_url: "some_url"
+          origin_pattern: "some_url"
+      }]
+
+  describe "getCompiledForPostData", ->
+    it "should return normal krake definition object", ->
+      result = @dvh.getCompiledForPostData
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+
+      expect(result).toEqual [{
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+      }]
+
+    it "should return post_data attributes in data", ->
+      result = @dvh.getCompiledForPostData
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data: 
+          oh_well: "what to do"
+
+      expect(result).toEqual [{
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data:
+          oh_well: "what to do"
+        data:
+          oh_well: "what to do"        
+      }]
+
+    it "should return post_data attributes in array in each data", ->
+      result = @dvh.getCompiledForPostData
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data: [
+          { oh_well: "what to do" },
+          { what_to_do: "can't do much" },
+        ]
+          
+
+      expect(result).toEqual [{
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data:
+          oh_well: "what to do"
+        data:
+          oh_well: "what to do"        
+      },
+      {
+        origin_url: "some_url",
+        columns: [{
+          col_name: "a col"
+          dom_query: ".a-col"
+        }]
+        post_data:
+          what_to_do: "can't do much"
+        data:
+          what_to_do: "can't do much"
+      }]
+
+
+  describe "mergePostDataToData", ->
+    it "should merge post_data into data", ->
+      post_data =
+        attr_1: "val_1"
+        attr_2: "val_2"
+        attr_3: "val_3"
+
+      data = 
+        org_val: "itis"
+      combined_data = @dvh.mergePostDataToData post_data, data
+
+      expect(combined_data).toEqual
+        attr_1: "val_1"
+        attr_2: "val_2"
+        attr_3: "val_3"
+        org_val: "itis"
+
+    it "should guard agaist nil post_data", ->
+      post_data =
+        attr_1: "val_1"
+        attr_2: "val_2"
+        attr_3: "val_3"
+
+      data = 
+        org_val: "itis"
+      combined_data = @dvh.mergePostDataToData null, data
+
+      expect(combined_data).toEqual
+        org_val: "itis"
+
+
+    it "should guard agaist nil data", ->
+      post_data =
+        attr_1: "val_1"
+        attr_2: "val_2"
+        attr_3: "val_3"
+
+      combined_data = @dvh.mergePostDataToData post_data, null
+
+      expect(combined_data).toEqual
+        attr_1: "val_1"
+        attr_2: "val_2"
+        attr_3: "val_3"
+
+    it "should covert value in data with value in post_data", ->
+      post_data =
+        org_val: "new_tis"
+        attr_2: "val_2"
+        attr_3: "val_3"
+
+      data = 
+        org_val: "itis"
+
+      combined_data = @dvh.mergePostDataToData post_data, data
+
+      expect(combined_data).toEqual
+        org_val: "new_tis"
+        attr_2: "val_2"
+        attr_3: "val_3"

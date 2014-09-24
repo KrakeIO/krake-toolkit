@@ -14,13 +14,9 @@ describe "Testing Query Helper", ->
     qh = new ktk.query.helper ""
     expect(qh.query_object).nil?.toBe false
   
-  it "should return all columns", ->
-    qh = new ktk.query.helper valid_query  
-    expect(qh.getColumns().length).toEqual 21
-
-  it "should return all columns", ->
-    qh = new ktk.query.helper valid_query  
-    expect(qh.getColumns().length).toEqual 21
+  it "should return all columns that are unique", ->
+    qh = new ktk.query.helper valid_query
+    expect(qh.getColumns().length).toEqual 20
 
   it "should return all permuted_columns in query", ->
     qh = new ktk.query.helper permuted_query
@@ -97,7 +93,7 @@ describe "Testing Query Helper", ->
     expect(qh.getColumns().indexOf('col1') > -1 ).toBe true    
     expect(qh.getColumns().length).toEqual 3    
 
-  it "should return not return duplicated nested data col in getColumns", ->
+  it "should return nested data col in getColumns", ->
     query = 
       origin_url: "some url"
       columns: [{
@@ -116,7 +112,7 @@ describe "Testing Query Helper", ->
     expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
     expect(qh.getColumns().length).toEqual 4
 
-  it "should return not return duplicated nested data col in getColumns", ->
+  it "should not return duplicated nested data col in getColumns", ->
     query = 
       origin_url: "some url"
       columns: [{
@@ -138,7 +134,7 @@ describe "Testing Query Helper", ->
     expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
     expect(qh.getColumns().length).toEqual 4
 
-  it "should return not return duplicated nested data col in getColumns", ->
+  it "should not return duplicated deeply nested data col in getColumns", ->
     query = 
       origin_url: "some url"
       columns: [{
@@ -163,6 +159,35 @@ describe "Testing Query Helper", ->
     expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
     expect(qh.getColumns().length).toEqual 4
 
+  it "should post_data in getColumns", ->
+    query = 
+      origin_url: "some url"
+      columns: [{
+        col_name: "col name"
+        dom_query: ".css"
+        required_attribute: "href"
+        options:
+          columns: [{
+            col_name: "col2"
+            dom_query: ".css2"
+          }]
+          data:
+            col2: "value"
+          post_data:
+            form_data_edge: 1
+      },{
+        col_name: "col2"
+        dom_query: ".css"
+      }]
+      data:
+        col2: "value"
+      post_data:
+        form_data_root: 2      
+              
+    qh = new ktk.query.helper query
+    expect(qh.getColumns().indexOf('col2') > -1 ).toBe true
+    expect(qh.getColumns().length).toEqual 6
+
   describe "getRootColumnsQueryObjects", ->
     it "should return columns objects in options.columns", ->
       qh = new ktk.query.helper valid_query
@@ -171,6 +196,7 @@ describe "Testing Query Helper", ->
     it "should return columns objects in options.permuted_columns.handles and options.permuted_columns.responses", ->
       qh = new ktk.query.helper permuted_nested_query
       expect(qh.getRootColumnsQueryObjects().length).toEqual 7
+
 
   describe "getRootAddressColumns", ->
     it "should return address columns at the root level", ->
@@ -205,3 +231,31 @@ describe "Testing Query Helper", ->
       root_nested_cols = qh.getRootColumnsWithNestedChild()
       expect(root_nested_cols.length).toEqual 2
 
+  describe "getUniqueColumns", ->
+    it "should return only unique values in a column", ->
+      qh = new ktk.query.helper valid_query
+      unique_cols = qh.getUniqueColumns ["wwww", "aaaa", "cccc", "kkkk", "aaaa"]
+      expect(unique_cols).toEqual ["wwww", "aaaa", "cccc", "kkkk"]
+
+  describe "getPostDataColumns", ->
+    it "should return all values from object", ->
+      qh = new ktk.query.helper valid_query
+      columns = qh.getPostDataColumns 
+        what: "if"
+        cant: "do"
+        oris:   "else"
+      expect(columns).toEqual [ "what", "cant", "oris" ]
+
+    it "should return all values from array of object", ->
+      qh = new ktk.query.helper valid_query
+      columns = qh.getPostDataColumns [{
+          what: "if"
+          cant: "do"
+          oris:   "else"
+        },{
+          what: "if"
+          cant: "do"
+          living: "caut"          
+        }]
+
+      expect(columns).toEqual [ "what", "cant", "oris", "what", "cant", "living" ]
