@@ -102,6 +102,7 @@ class QueryHelper
 
   # @Description: returns all the columns in the post data
   getPostDataColumns: (post_data)->
+    post_data = post_data || {}
     columns = []
     if Array.isArray post_data
       post_data.forEach (curr_post_data)=>
@@ -112,8 +113,8 @@ class QueryHelper
   
   # @Description: only unique values in columns
   getUniqueColumns : (raw_columns)->
+    raw_columns = raw_columns || []    
     unique_cols = []
-    raw_columns = raw_columns || []
     raw_columns.forEach (curr_col)=>
       if curr_col not in unique_cols
         unique_cols.push curr_col
