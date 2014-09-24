@@ -31,6 +31,8 @@ class QueryHelper
       else
         @origin_query_obj = @query_object = {}
         @columns = []
+
+      @columns = @getUniqueColumns @columns
   
   # @Description : returns columns containing urls
   # @return columns:array[string1, string2, string3, ...] || []
@@ -89,12 +91,35 @@ class QueryHelper
     if query_object?.permuted_columns?.responses
       columns = columns.concat @getColumnsRecursive query_object.permuted_columns.responses
 
+    if query_object?.post_data?
+      columns = columns.concat @getPostDataColumns query_object.post_data
+
     if query_object?.data?
       for col_name, col_val of query_object.data
-        columns.push(col_name) unless columns.indexOf(col_name) > -1
+        columns.push(col_name)
 
+    @getUniqueColumns columns
+
+  # @Description: returns all the columns in the post data
+  getPostDataColumns: (post_data)->
+    columns = []
+    if Array.isArray post_data
+      post_data.forEach (curr_post_data)=>
+        columns = columns.concat Object.keys(curr_post_data)
+    else
+      columns = Object.keys(post_data)
     columns
   
+  # @Description: only unique values in columns
+  getUniqueColumns : (raw_columns)->
+    unique_cols = []
+    raw_columns = raw_columns || []
+    raw_columns.forEach (curr_col)=>
+      if curr_col not in unique_cols
+        unique_cols.push curr_col
+    unique_cols
+
+
   # @Description: obtain an array of all column names given a scrape input json
   # @param: columnArray: array[string1, string2, string3, ...]
   getColumnsRecursive : (columnArray)->

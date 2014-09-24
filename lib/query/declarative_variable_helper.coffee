@@ -35,15 +35,24 @@ class DeclarativeVariableHelper
       compiled_objs.push task_option_obj
     else
       if Array.isArray task_option_obj.post_data
-        task_option_obj.post_data.forEach (post_data)->
+        task_option_obj.post_data.forEach (post_data)=>
           new_task_option_object = kson.parse(kson.stringify(task_option_obj))
+          new_task_option_object.data = @mergePostDataToData post_data, new_task_option_object.data
           new_task_option_object.post_data = post_data
           compiled_objs.push new_task_option_object
 
       else
+        task_option_obj.data = @mergePostDataToData task_option_obj.post_data, task_option_obj.data, 
         compiled_objs.push task_option_obj
 
     compiled_objs
+
+  mergePostDataToData: (post_data_obj, data)->
+    post_data_obj = post_data_obj || {}
+    data          = data || {}
+    Object.keys(post_data_obj).forEach (attr)->
+      data[attr] = post_data_obj[attr]
+    data
 
   getCompiledForURLs: (task_option_obj, prefix)->
     compiled_objs = []    
