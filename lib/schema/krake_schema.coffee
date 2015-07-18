@@ -4,13 +4,16 @@ krakeSchema = {
   name: Sequelize.TEXT
   content: Sequelize.TEXT
   frequency: Sequelize.TEXT
-  last_ran: Sequelize.DATE
-  status: Sequelize.TEXT
   is_private: Sequelize.BOOLEAN
   description: Sequelize.TEXT
   handle: Sequelize.TEXT
+  status: Sequelize.TEXT  
+  last_ran: Sequelize.DATE  
   webhook_url: Sequelize.TEXT
   call_limit: Sequelize.INTEGER 
+  latest_count: Sequelize.INTEGER
+  crawl_source_option: Sequelize.INTEGER
+  manual_crawl_sources: Sequelize.TEXT
 }
 
 module.exports = krakeSchema

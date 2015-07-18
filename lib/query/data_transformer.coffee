@@ -14,7 +14,7 @@ class DataTransformer
       
       when 'phone'
         return_value = @getPhone()
-      
+        
       else
         return_value = @value
     
