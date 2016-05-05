@@ -12,7 +12,9 @@ class QueryHelper
     @is_url_array = []
     
     @qv.validate @query_object, (@is_valid, @query_object)=>
+      
       if @is_valid
+        @domain = @getDomain @query_object
         @columns = []
         # if @query_object.columns
         #   @columns = @columns.concat @getColumnsRecursive @query_object.columns
@@ -34,6 +36,25 @@ class QueryHelper
 
       @columns = @getUniqueColumns @columns
   
+  getDomain : ( query_object )->
+    raw_url = false
+    domain = false
+    if query_object?.origin_url
+      
+      if typeof query_object.origin_url is 'string'
+        raw_url = query_object.origin_url
+
+      else if query_object.origin_url instanceof Array
+        raw_url = query_object.origin_url[0]
+
+      else if typeof query_object.origin_url is 'object' and query_object.origin_url.origin_pattern
+        raw_url = query_object.origin_url?.origin_pattern
+
+    if raw_url
+      matches = raw_url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i)
+      domain = matches && matches[1]
+    domain
+
   # @Description : returns columns containing urls
   # @return columns:array[string1, string2, string3, ...] || []
   getUrlColumns : ()->
