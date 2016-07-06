@@ -14,6 +14,8 @@ krakeSchema = {
   latest_count: Sequelize.INTEGER
   crawl_source_option: Sequelize.INTEGER
   manual_crawl_sources: Sequelize.TEXT
+  template_id: Sequelize.INTEGER
+  definition_type: Sequelize.INTEGER
 }
 
 module.exports = krakeSchema
