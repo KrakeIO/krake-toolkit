@@ -6,13 +6,13 @@ class QueryHelper
   # Sets up the query helper object
   constructor:(@query_object)->
     @origin_query_obj = @query_object
+    @query_object = @extractContent @query_object
     @qv = new QueryValidator()
     
     @is_index_array = []
     @is_url_array = []
     
     @qv.validate @query_object, (@is_valid, @query_object)=>
-      
       if @is_valid
         @domain = @getDomain @query_object
         @columns = []
@@ -35,7 +35,19 @@ class QueryHelper
         @columns = []
 
       @columns = @getUniqueColumns @columns
-  
+
+  extractContent: ( query_object )->  
+    if typeof query_object == "string"
+      query_object
+
+    else if typeof query_object == "object"
+      if query_object.template_id? && query_object.template? && query_object.template.content?
+        query_object.template.content
+      else if query_object.content?
+        query_object.content
+      else 
+        query_object
+
   getDomain : ( query_object )->
     raw_url = false
     domain = false
