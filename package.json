@@ -9,9 +9,6 @@
   , "dependencies": {
       "async" : ""  
     , "kson": "https://github.com/KrakeIO/kson/tarball/master"
-    , "mongoose": ""
-    , "pg" : ""    
-    , "pg-hstore": ""   
     , "request": ""    
     , "sequelize": ""
   },
