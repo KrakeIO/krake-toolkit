@@ -187,7 +187,7 @@ describe "test extraction of 1st number ", ()->
 
 
 
-describe "test extraction using string Regex type ", ()->
+describe "test extraction using string Regex type for number", ()->
   it "should return a number ", (done)->
 
     column_object = {
@@ -201,8 +201,6 @@ describe "test extraction using string Regex type ", ()->
     output = dt.getValue()
     expect(output).toEqual "01"
     done()
-
-
 
 describe "test extraction of 2nd numbers ", ()->
   it "should return a number ", (done)->

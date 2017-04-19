@@ -30,13 +30,17 @@ class DataTransformer
     group = @column_object.regex_group || 0
     switch typeof(@column_object.regex_pattern)
       when "string"
-        flag    = @column_object.regex_flag || 'ig'
-        pattern = new RegExp(@column_object.regex_pattern, flag)
+        if @column_object.regex_group? && @column_object.regex_flag?
+          pattern = new RegExp(@column_object.regex_pattern, @column_object.regex_flag)
+        else if  @column_object.regex_group?
+          pattern = new RegExp(@column_object.regex_pattern)
+        else
+          flag    = @column_object.regex_flag || 'ig'
+          pattern = new RegExp(@column_object.regex_pattern, flag)
         
       else # assume regex
         # regex_flag is ignored, flags can be included e.g. /Meow/i
         pattern = @column_object.regex_pattern
-    
     values = curr_value.match(pattern) || []
     
     # Select only base on number

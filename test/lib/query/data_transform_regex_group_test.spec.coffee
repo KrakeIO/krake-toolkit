@@ -113,6 +113,7 @@ describe "test extraction of 2nd numbers ", ()->
         "col_name": "number extracted using regex"
         "xpath": "//*[@id='thelist']/tr/td/table/tbody/tr/td[3]"
         'regex_pattern' : "[0-9]+"
+        'regex_flag' : 'gi'
         'regex_group' : 2
     }
 
@@ -140,4 +141,19 @@ describe "test extraction of a string of comma separated numbers ", ()->
     expect(output).toEqual "01,001,02,2528,2825,600,5,15,00,20,00,120,001,30,3,360,95,02,2733,7333,600,77,8,3,1,120,3,360"
     done()
     
-    
+
+describe "test extraction using string Regex type for regex group", ()->
+  it "should return neighborhood", (done)->
+    some_value = "Neighborhood: Meadows Village"
+    column_object = {
+        "col_name": "neighborhood",
+        "dom_query": "h2:contains('Neighborhood')",
+        "regex_pattern": "Neighborhood: (.*)",
+        "regex_group": 1
+    }
+
+    dt = new DataTransformer some_value, column_object
+
+    output = dt.getValue()
+    expect(output).toEqual "Meadows Village"
+    done()
