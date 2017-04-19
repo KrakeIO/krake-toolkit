@@ -105,6 +105,24 @@ describe "test extraction of 2nd numbers ", ()->
     done()
 
 
+
+describe "test extraction of 2nd numbers ", ()->
+  it "should return a number ", (done)->
+
+    column_object = {
+        "col_name": "number extracted using regex"
+        "xpath": "//*[@id='thelist']/tr/td/table/tbody/tr/td[3]"
+        'regex_pattern' : "[0-9]+"
+        'regex_group' : 2
+    }
+
+    dt = new DataTransformer value, column_object
+
+    output = dt.getValue()
+    expect(output).toEqual "02"
+    done()
+
+
     
 describe "test extraction of a string of comma separated numbers ", ()->
   it "should return a string of comma separated number ", (done)->

@@ -87,7 +87,6 @@ value = "歡迎光臨 ICEWOODS 冰河森林數位科技有限公司的購物商�
   有最新的變形金剛；Mighty Muggs；HASBRO孩之寶；樂高模型；日版、美版、陸版品牌玩具模型公仔等。"
 
 
-
 describe "test extraction of phone number ", ()->
   it "should return a valid phone number ", (done)->
 
@@ -185,6 +184,24 @@ describe "test extraction of 1st number ", ()->
     output = dt.getValue()
     expect(output).toEqual "01"
     done()
+
+
+
+describe "test extraction using string Regex type ", ()->
+  it "should return a number ", (done)->
+
+    column_object = {
+        "col_name": "number extracted using regex"
+        "xpath": "//*[@id='thelist']/tr/td/table/tbody/tr/td[3]"
+        'regex_pattern' : "[0-9]+"
+    }
+
+    dt = new DataTransformer value, column_object
+
+    output = dt.getValue()
+    expect(output).toEqual "01"
+    done()
+
 
 
 describe "test extraction of 2nd numbers ", ()->
