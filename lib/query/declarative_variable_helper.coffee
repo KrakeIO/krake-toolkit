@@ -123,6 +123,18 @@ class DeclarativeVariableHelper
     if prefix.length > 0
       variable = prefix + '_' + variable
     embeddedVar = '@@' + variable + '@@'
+
+  # @Description : returns the modified variable name given prefix that is to be detected 
+  #   origin_url string variable value insertion dynamically
+  # @param : prefix:String
+  # @param : variable:String  
+  # @return : variable:String  
+  getEmbeddedVariableNameNew : (prefix, variable)->
+  
+    prefix = prefix || ''
+    if prefix.length > 0
+      variable = prefix + '_' + variable
+    embeddedVar = '{{' + variable + '}}'    
   
   
   
@@ -136,7 +148,9 @@ class DeclarativeVariableHelper
     
     for x in [0...data_keys.length]
       originValueRegex = new RegExp @getEmbeddedVariableName( '' , data_keys[x]), "g"
-      # string_template = string_template.replace( originValueRegex, encodeURIComponent( data_obj[data_keys[x]] ))      
+      string_template = string_template.replace( originValueRegex, data_obj[data_keys[x]] )
+
+      originValueRegex = new RegExp @getEmbeddedVariableNameNew( '' , data_keys[x]), "g"
       string_template = string_template.replace( originValueRegex, data_obj[data_keys[x]] )
 
     string_template
